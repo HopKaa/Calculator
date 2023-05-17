@@ -5,37 +5,22 @@ using UnityEngine.UI;
 
 public class Calculator : MonoBehaviour
 {
-    public InputField InputField1;
-    public InputField InputField2;
-    public InputField Result;
+    [SerializeField] private InputField _inputField1;
+    [SerializeField] private InputField _inputField2;
+    [SerializeField] private InputField _result;
+
 
     private float _value1;
     private float _value2;
 
-    private bool TryParseValues()
-    {
-        if (InputField1.text == "")
-        {
-            Result.text = "Value1 не заполнено";
-            return false;
-        }
-        else if (InputField2.text == "")
-        {
-            Result.text = "Value2 не заполнено";
-            return false;
-        }
 
-        _value1 = float.Parse(InputField1.text);
-        _value2 = float.Parse(InputField2.text);
-
-        return true;
-    }
-    public void ClickPlus ()
+    public void ClickPlus()
     {
-        if(!TryParseValues())
+        if (!TryParseValues())
         {
             return;
         }
+
         ShowResult(_value1 + _value2);
     }
     public void ClickMinus()
@@ -64,14 +49,14 @@ public class Calculator : MonoBehaviour
         {
             return;
         }
-        else if (_value2 > 0)
+
+        if (_value2 == 0)
         {
-            ShowResult(_value1 / _value2);
+            _result.text = "ƒеление на 0 невозможно";
+            return;
         }
-        else
-        {
-            Result.text = "ƒеление на 0 невозможно";
-        }
+
+        ShowResult(_value1 / _value2);
     }
 
     public void ClickMinimum()
@@ -103,8 +88,29 @@ public class Calculator : MonoBehaviour
 
         ShowResult(Mathf.Pow(_value1, _value2));
     }
-     private void ShowResult(float result)
+
+    private bool TryParseValues()
     {
-        Result.text = "Result: " + result.ToString();
+        if (_inputField1.text == "")
+        {
+            _result.text = "Value1 не заполнено";
+            return false;
+        }
+
+        if (_inputField2.text == "")
+        {
+            _result.text = "Value2 не заполнено";
+            return false;
+        }
+
+        _value1 = float.Parse(_inputField1.text);
+        _value2 = float.Parse(_inputField2.text);
+
+        return true;
+    }
+
+    private void ShowResult(float result)
+    {
+        _result.text = "Result: " + result.ToString();
     }
 }
