@@ -8,13 +8,7 @@ using UnityEngine.UI;
 public class Calculator : MonoBehaviour
 {
 
-    /*[SerializeField] private InputField _inputField1;
-    [SerializeField] private InputField _inputField2;
-    [SerializeField] private InputField _result;*/
-
-
-    //[SerializeField] private InputField _inputField;
-    [SerializeField] private Text _Text;
+    [SerializeField] private Text _text;
 
 
     private float _value1;
@@ -25,7 +19,7 @@ public class Calculator : MonoBehaviour
     public void ClickNumber(int value)
     {
         Debug.Log($" check value: {value}");
-        _Text.text += $"{value}";
+        _text.text += $"{value}";
         if (_value1 == 0)
         {
             _value1 += value;
@@ -39,13 +33,13 @@ public class Calculator : MonoBehaviour
     {
         Debug.Log($" ClickOperation value: {value}");
         _operation += value;
-        _Text.text += $"{value}";
+        _text.text += $"{value}";
     }
 
     public void ClickEqual(string value)
     {
         Debug.Log($" ClickEqual value: {value}");
-        if (_value1 != 0 && _value2 != 0 && string.IsNullOrEmpty(_operation))
+        if (!string.IsNullOrEmpty(_operation))
         {
             switch (_operation)
             {
@@ -59,7 +53,15 @@ public class Calculator : MonoBehaviour
                     ShowResult(_value1 * _value2);
                     break;
                 case "/":
-                    ShowResult(_value1 / _value2);
+                    if (_value2 != 0)
+                    {
+                        ShowResult(_value1 / _value2);
+                    }
+
+                    if (_value2 == 0)
+                    {
+                        _text.text = "Деление на 0 невозможно";
+                    }
                     break;
                 case "min":
                     ShowResult(Mathf.Min(_value1, _value2));
@@ -74,9 +76,13 @@ public class Calculator : MonoBehaviour
         }
     }
 
+    public void ClickClear()
+    {
+        _text.text = "";
+    }
 
     private void ShowResult(float result)
     {
-        _Text.text = "Result: " + result.ToString();
+        _text.text = "Result: " + result.ToString();
     }
 }
