@@ -1,116 +1,82 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Calculator : MonoBehaviour
 {
-    [SerializeField] private InputField _inputField1;
+
+    /*[SerializeField] private InputField _inputField1;
     [SerializeField] private InputField _inputField2;
-    [SerializeField] private InputField _result;
+    [SerializeField] private InputField _result;*/
+
+
+    //[SerializeField] private InputField _inputField;
+    [SerializeField] private Text _Text;
 
 
     private float _value1;
     private float _value2;
+    private string _operation;
 
 
-    public void ClickPlus()
+    public void ClickNumber(int value)
     {
-        if (!TryParseValues())
+        Debug.Log($" check value: {value}");
+        _Text.text += $"{value}";
+        if (_value1 == 0)
         {
-            return;
+            _value1 += value;
         }
-
-        ShowResult(_value1 + _value2);
+        else
+        {
+            _value2 += value;
+        }    
     }
-    public void ClickMinus()
+    public void ClickOperation(string value)
     {
-        if (!TryParseValues())
-        {
-            return;
-        }
-
-        ShowResult(_value1 - _value2);
-    }
-
-    public void ClickMultiplication()
-    {
-        if (!TryParseValues())
-        {
-            return;
-        }
-
-        ShowResult(_value1 * _value2);
+        Debug.Log($" ClickOperation value: {value}");
+        _operation += value;
+        _Text.text += $"{value}";
     }
 
-    public void ClickDivisi()
+    public void ClickEqual(string value)
     {
-        if (!TryParseValues())
+        Debug.Log($" ClickEqual value: {value}");
+        if (_value1 != 0 && _value2 != 0 && string.IsNullOrEmpty(_operation))
         {
-            return;
+            switch (_operation)
+            {
+                case "+":
+                    ShowResult(_value1 + _value2);
+                    break;
+                case "-":
+                    ShowResult(_value1 - _value2);
+                    break;
+                case "*":
+                    ShowResult(_value1 * _value2);
+                    break;
+                case "/":
+                    ShowResult(_value1 / _value2);
+                    break;
+                case "min":
+                    ShowResult(Mathf.Min(_value1, _value2));
+                    break;
+                case "max":
+                    ShowResult(Mathf.Max(_value1, _value2));
+                    break;
+                case "^":
+                    ShowResult(Mathf.Pow(_value1, _value2));
+                    break;
+            }
         }
-
-        if (_value2 == 0)
-        {
-            _result.text = "ƒеление на 0 невозможно";
-            return;
-        }
-
-        ShowResult(_value1 / _value2);
     }
 
-    public void ClickMinimum()
-    {
-        if (!TryParseValues())
-        {
-            return;
-        }
-
-        ShowResult(Mathf.Min(_value1, _value2));
-    }
-
-    public void ClickMaximum()
-    {
-        if (!TryParseValues())
-        {
-            return;
-        }
-
-        ShowResult(Mathf.Max(_value1, _value2));
-    }
-
-    public void ClickDegree()
-    {
-        if (!TryParseValues())
-        {
-            return;
-        }
-
-        ShowResult(Mathf.Pow(_value1, _value2));
-    }
-
-    private bool TryParseValues()
-    {
-        if (_inputField1.text == "")
-        {
-            _result.text = "Value1 не заполнено";
-            return false;
-        }
-
-        if (_inputField2.text == "")
-        {
-            _result.text = "Value2 не заполнено";
-            return false;
-        }
-
-        _value1 = float.Parse(_inputField1.text);
-        _value2 = float.Parse(_inputField2.text);
-
-        return true;
-    }
 
     private void ShowResult(float result)
     {
-        _result.text = "Result: " + result.ToString();
+        _Text.text = "Result: " + result.ToString();
     }
 }
