@@ -63,6 +63,13 @@ public class Calculator : MonoBehaviour
                         _text.text = "Деление на 0 невозможно";
                     }
                     break;
+
+                case "log2":
+                    ShowResult(Mathf.Log(_value1));
+                    break;
+                case "log10":
+                    ShowResult(Mathf.Log10(_value1));
+                    break;
                 case "min":
                     ShowResult(Mathf.Min(_value1, _value2));
                     break;
@@ -71,6 +78,17 @@ public class Calculator : MonoBehaviour
                     break;
                 case "^":
                     ShowResult(Mathf.Pow(_value1, _value2));
+                    break;
+                case "cot":
+                    ShowResult(1 / Mathf.Tan(_value1));
+                    break;
+                case "sin":
+                    ShowResult(Mathf.Sin(_value1));
+                    break;
+                case "pi":
+                    ShowResult(Mathf.PI);
+                    break;
+                default:
                     break;
             }
         }
