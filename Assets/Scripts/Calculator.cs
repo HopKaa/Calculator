@@ -22,11 +22,11 @@ public class Calculator : MonoBehaviour
         _text.text += $"{value}";
         if (_value1 == 0)
         {
-            _value1 += value;
+            _value1 = value;
         }
         else
         {
-            _value2 += value;
+            _value2 = value;
         }    
     }
     public void ClickOperation(string value)
@@ -80,6 +80,15 @@ public class Calculator : MonoBehaviour
                     ShowResult(Mathf.Pow(_value1, _value2));
                     break;
                 case "cot":
+                    if (Mathf.Tan(_value1) != 0)
+                    {
+                        ShowResult(1 / Mathf.Tan(_value1));
+                    }
+
+                    if (Mathf.Tan(_value1) == 0)
+                    {
+                        ShowResult(0);
+                    }
                     ShowResult(1 / Mathf.Tan(_value1));
                     break;
                 case "sin":
@@ -87,6 +96,38 @@ public class Calculator : MonoBehaviour
                     break;
                 case "pi":
                     ShowResult(Mathf.PI);
+                    break;
+                case "izi":
+                    string result = "";
+                    for (; _value1 % 2 == 0; _text.text += $"{result}")
+                    {
+                        _value1 = _value1 / 2;
+                        ShowResultIzi(2);
+                    }
+
+                    for (; _value1 % 3 == 0; _text.text += $"{result}")
+                    {
+                        _value1 = _value1 / 3;
+                        ShowResultIzi(3);
+                    }
+
+                    for (; _value1 % 5 == 0; _text.text += $"{result}")
+                    {
+                        _value1 = _value1 / 5;
+                        ShowResultIzi(5);
+                    }
+
+                    for (; _value1 % 7 == 0; _text.text += $"{result}")
+                    {
+                        _value1 = _value1 / 7;
+                        ShowResultIzi(7);
+                    }
+
+                    for (; _value1 % 11 == 0; _text.text += $"{result}")
+                    {
+                        _value1 = _value1 / 11;
+                        ShowResultIzi(11);
+                    }
                     break;
                 default:
                     break;
@@ -102,5 +143,9 @@ public class Calculator : MonoBehaviour
     private void ShowResult(float result)
     {
         _text.text = "Result: " + result.ToString();
+    }
+    private void ShowResultIzi(float result)
+    {
+        _text.text += $"{result}";
     }
 }
