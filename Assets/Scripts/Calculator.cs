@@ -22,11 +22,11 @@ public class Calculator : MonoBehaviour
         _text.text += $"{value}";
         if (_value1 == 0)
         {
-            _value1 = value;
+            _value1 += value;
         }
         else
         {
-            _value2 = value;
+            _value2 += value;
         }    
     }
     public void ClickOperation(string value)
