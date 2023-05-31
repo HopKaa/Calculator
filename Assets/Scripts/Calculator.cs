@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -11,55 +12,58 @@ public class Calculator : MonoBehaviour
     [SerializeField] private Text _text;
 
 
-    private float _value1;
-    private float _value2;
-
+    private float _valueCurrent;
+    private float _valuePrevios;
+    private char _lastOperation;
 
     public void ClickNumber(int value)
     {
         Debug.Log($" check value: {value}");
         _text.text += $"{value}";
-        if (_value1 == 0)
-        {
-            _value1 += value;
-        }
-        else
-        {
-            _value2 += value;
-        }
+        _valueCurrent = _valueCurrent * 10 + value;
     }
-    public void ClickOperation(string value)
-    {
-        Debug.Log($" ClickOperation value: {value}");
-        _text.text += $"{value}";
-    }
+    private Dictionary<char, Func<float, float, float>> _operations;
 
+    private void Awake()
+    {
+        _operations = new Dictionary<char, Func<float, float, float>>()
+        {
+            { '+', (a, b) => a + b },
+            { '-', (a, b) => a - b },
+            { '*', (a, b) => a * b },
+            { '/', (a, b) => a / b },
+            { '^', Mathf.Pow },
+        };
+    }
     public void ClickPlus()
     {
-        ShowResult(_value1 + _value2);
+        ClickEqual();
+        _lastOperation = '+';
         UpdateText("+");
     }
-
+    
     public void ClickMinus()
     {
-        ShowResult(_value1 - _value2);
+        ClickEqual();
+        _lastOperation = '-';
         UpdateText("-");
     }
 
     public void ClickMultiplication()
     {
-        ShowResult(_value1 * _value2);
+        ClickEqual();
+        _lastOperation = '*';
         UpdateText("*");
     }
 
     public void ClickDivisin()
     {
-        if (_value2 != 0)
+        if (_valueCurrent == 0)
         {
-            ShowResult(_value1 / _value2);
+            ClickEqual();
+            _lastOperation = '/';
         }
-
-        if (_value2 == 0)
+        else
         {
             _text.text = "division by 0 is not possible";
         }
@@ -68,59 +72,70 @@ public class Calculator : MonoBehaviour
 
     public void ClickDegree()
     {
-        ShowResult(Mathf.Pow(_value1, _value2));
+        ClickEqual();
+        _lastOperation = '^';
         UpdateText("^");
     }
 
     public void ClickLog2()
     {
-        ShowResult(Mathf.Log(_value1));
-        UpdateText("log2");
+        ClickEqual();
+        float result = Mathf.Log(_valueCurrent);
+        ShowResult(result);
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
 
     public void ClickLog10()
     {
-        ShowResult(Mathf.Log10(_value1));
-        UpdateText("log10");
+        ClickEqual();
+        float result = Mathf.Log10(_valueCurrent);
+        ShowResult(result);
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
 
     public void ClickMinimum()
     {
-        ShowResult(Mathf.Min(_value1, _value2));
-        UpdateText("min");
+        ClickEqual();
+        float result = Mathf.Min(_valuePrevios, _valueCurrent);
+        ShowResult(result);
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
 
     public void ClickMaximum()
     {
-        ShowResult(Mathf.Max(_value1, _value2));
-        UpdateText("max");
+        ClickEqual();
+        float result = Mathf.Max(_valuePrevios, _valueCurrent);
+        ShowResult(result);
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
 
     public void ClickCot()
     {
-        if (Mathf.Tan(_value1) != 0)
-        {
-            ShowResult(1 / Mathf.Tan(_value1));
-        }
-
-        if (Mathf.Tan(_value1) == 0)
-        {
-            ShowResult(0);
-        }
-        ShowResult(1 / Mathf.Tan(_value1));
-        UpdateText("cot");
+        ClickEqual();
+        float result = 1f / Mathf.Tan(_valueCurrent);
+        ShowResult(result);
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
 
     public void ClickSin()
     {
-        ShowResult(Mathf.Sin(_value1));
-        UpdateText("sin");
+        ClickEqual();
+        float result = Mathf.Sin(_valueCurrent);
+        ShowResult(result);
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
 
     public void ClickPI()
     {
+        ClickEqual();
         ShowResult(Mathf.PI);
-        UpdateText("");
+        _valuePrevios = Mathf.PI;
     }
     public void OnCalculateClick()
     {
@@ -138,9 +153,23 @@ public class Calculator : MonoBehaviour
 
         _text.text = result;
     }
-    public void ClickEqual(string operation)
+
+    public void ClickEqual()
     {
-       _text.text += $"{operation}"; 
+
+        if (_lastOperation != '\0')
+        {
+            if (_operations.TryGetValue(_lastOperation, out Func<float, float, float> operation))
+            {
+                float result = operation(_valuePrevios, _valueCurrent);
+                ShowResult(result);
+                _lastOperation = '\0';
+            }
+            else
+            {
+                Debug.LogError($"Unknown operation: {_lastOperation}");
+            }
+        }
     }
 
     public void ClickClear()
@@ -154,7 +183,7 @@ public class Calculator : MonoBehaviour
     private void ShowResult(float result)
     {
         _text.text = result.ToString();
+        _valuePrevios = result;
+        _valueCurrent = 0;
     }
-
-   
 }
