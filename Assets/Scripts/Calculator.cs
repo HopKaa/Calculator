@@ -58,7 +58,7 @@ public class Calculator : MonoBehaviour
 
     public void ClickDivisin()
     {
-        if (_valueCurrent == 0)
+        if (_valueCurrent != 0)
         {
             ClickEqual();
             _lastOperation = '/';
